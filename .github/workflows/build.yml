@@ -8,18 +8,23 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          submodules: recursive # Crucial for C++ projects
+          submodules: recursive
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
+      # kdmapper often uses NuGet for dependencies
+      - name: Restore NuGet Packages
+        run: nuget restore kdmapper.sln
+
       - name: Build Solution
-        run: msbuild YourSolutionName.sln /p:Configuration=Release /p:Platform=x64
+        # Using the correct name: kdmapper.sln
+        run: msbuild kdmapper.sln /p:Configuration=Release /p:Platform=x64
 
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
-          name: my-build-files
+          name: kdmapper-binary
           path: |
             **/Release/*.exe
-            **/Release/*.dll
+            **/Release/*.sys
